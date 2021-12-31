@@ -16,4 +16,4 @@ Task links:
 	https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab4_2020.pdf
 
 5. Lab5: 
-	https://ssd.sscc.ru/sites/ru/content/opplabs/loadbalancing
+	https://ssd.sscc.ru/ru/content/opplabs/loadbalancing
