@@ -2,14 +2,14 @@
 
 **Version 1.1**
 
-- [https://ssd.sscc.ru/ru/chair/nsu/parallel-programming](Main page)
+- [Main page](https://ssd.sscc.ru/ru/chair/nsu/parallel-programming)
 
-- [https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab1_2020.pdf](Lab1)
+- [Lab1](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab1_2020.pdf)
 
-- [https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab2_2020.pdf](Lab2)
+- [Lab2](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab2_2020.pdf)
 
-- [https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab3_2020.pdf](Lab3)
+- [Lab3](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab3_2020.pdf)
 
-- [https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab4_2020.pdf](Lab4)
+- [Lab4](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab4_2020.pdf)
 
-- [https://ssd.sscc.ru/ru/content/opplabs/loadbalancing](Lab5)
+- [Lab5](https://ssd.sscc.ru/ru/content/opplabs/loadbalancing)
