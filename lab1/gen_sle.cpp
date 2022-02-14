@@ -26,9 +26,11 @@ int main(int argc, char ** argv) {
 	out << '\n';
 	out.flush();
 
+    int lambda = (40 + rand() % 100) * size;
+
 	double *arr = new double[size * size];
 	for(int index = 0; index < size; index++)
-		arr[index * (size + 1)] = random_double();
+		arr[index * (size + 1)] = random_double() + lambda;
 	for(int row = 0; row < size; row++) {
 		for(int column = row + 1; column < size; column++)
 			arr[row * size + column] = arr[column * size + row] = random_double();
