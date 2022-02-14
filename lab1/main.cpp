@@ -26,10 +26,8 @@ int main(int argc, char** argv) {
 
     double alpha;
     double beta;
-	std::ofstream eps("e.txt");
 
     while(rest.norma() / b.norma() >= epsilon) {
-		eps << rest.norma() / b.norma() << '\n'; 
 		Vector z_1 = koefs * z;
         alpha = Vector::dotProduction(rest, rest) / Vector::dotProduction(z_1, z);
 		Vector new_rest = rest - alpha * z_1;
@@ -40,6 +38,5 @@ int main(int argc, char** argv) {
     }
 
 	result.print(std::cout);
-	eps.close();
     return 0;
 }
