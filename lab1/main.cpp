@@ -24,17 +24,16 @@ int main(int argc, char** argv) {
     Vector result(arrx0, size), rest = b - koefs * result, z = rest;
     delete[] arrx0;
 
-    double alpha;
-    double beta;
+	double control = b.squareNorm() * epsilon * epsilon;
 
-    while(rest.norma() / b.norma() >= epsilon) {
-		Vector z_1 = koefs * z;
-        alpha = Vector::dotProduction(rest, rest) / Vector::dotProduction(z_1, z);
-		Vector new_rest = rest - alpha * z_1;
-		beta = Vector::dotProduction(new_rest, new_rest) / Vector::dotProduction(rest, rest);
-		result = result + alpha * z;
-		z = new_rest + beta * z;
-		rest = new_rest;
+    for(int iter = 0; iter < 10000 &&rest.squareNorm() >= control; iter++) {
+	Vector z_1 = koefs * z;
+        double alpha = Vector::dotProduction(rest, rest) / Vector::dotProduction(z_1, z);
+	Vector new_rest = rest - alpha * z_1;
+	double beta = Vector::dotProduction(new_rest, new_rest) / Vector::dotProduction(rest, rest);
+	result = result + alpha * z;
+	z = new_rest + beta * z;
+	rest = new_rest;
     }
 
 	result.print(std::cout);
