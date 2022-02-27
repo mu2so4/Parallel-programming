@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-O2 -c -Wall
+CFLAGS=-O2 -c -Wall -std=c++14
 
 all: non-p sle-generator check
 

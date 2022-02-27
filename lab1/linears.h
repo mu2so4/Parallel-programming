@@ -16,7 +16,7 @@ public:
 
     ~Matrix() { delete[] data; }
 
-	double &operator[](int index) const;
+    double &operator[](int index) const;
 };
 
 class Vector {
@@ -37,9 +37,9 @@ public:
 
     void print(std::ostream &out) const;
 
-    double norma() const;
+    double squareNorm() const;
 
-	double &operator[](int index) const;
+    double &operator[](int index) const;
     friend Vector operator+(Vector a, const Vector &b);
     friend Vector operator-(Vector a, const Vector &b);
     friend Vector operator*(const Matrix &mat, Vector vec);
