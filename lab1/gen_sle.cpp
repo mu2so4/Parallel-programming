@@ -31,28 +31,11 @@ int main(int argc, char ** argv) {
 	for(int row = 0; row < size; row++) {
 		for(int column = row + 1; column < size; column++) {
 			arr[row * size + column] = arr[column * size + row] = random_double();
-			arr[(size + 1) * row] -= arr[row * size + column];
-			arr[(size + 1) * column] -= arr[row * size + column];
 		}
 	}
 	for(int index = 0; index < size; index++)
-		arr[(size + 1) * index] += size + random_double() + 100;
+		arr[(size + 1) * index] = random_double() + 150 + size;
 
-	/*for(int row = 0; row < size; row++)
-		for(int column = row; column < size; column++) {
-			for(int index = 0; index < size; index++)
-				arr[row * size + column] += pre[row * size + index] * pre[column * size + index];
-			arr[column * size + row] = arr[row * size + column];
-		}*/
-
-	/*for(int index = 0; index < size; index++)
-		arr[index * (size + 1)] += 200;
-
-	for(int row = 0; row < size; row++)
-		for(int column = row + 1; column < size; column++) {
-			double semi = (arr[row * size + column] + arr[column * size + row]) / 2;
-			arr[row * size + column] = arr[column * size + row] = semi; 
-		}*/
 	for(int row = 0; row < size; row++) {
 		for(int column = 0; column < size; column++) {
 			out << arr[row * size + column] << '\t';
