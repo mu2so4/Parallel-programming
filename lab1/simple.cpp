@@ -80,11 +80,8 @@ void Vector::print(std::ostream &out) const {
 	out << '\n';
 }
 
-double Vector::norma() const {
-	double res = 0;
-	for(int index = 0; index < size; index++)
-		res += data[index] * data[index];
-	return sqrt(res);
+double Vector::squareNorm() const {
+	return dotProduction(*this, *this);
 }
 
 double &Vector::operator[](int index) const {
