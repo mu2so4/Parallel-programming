@@ -1,8 +1,8 @@
 #include "linears.h"
 
-Matrix::Matrix(const double *mat, int dim): size(dim) {
-    data = new double[size * size];
-	for(int index = 0; index < size * size; index++)
+Matrix::Matrix(const double *mat, int dim, int subS): size(dim), subSize(subS) {
+    data = new double[size * subSize];
+	for(int index = 0; index < size * subSize; index++)
 		data[index] = mat[index];
 }
 
@@ -10,30 +10,30 @@ double &Matrix::operator[](int index) const {
 	return data[index];
 }
 
-Vector::Vector(int length): size(length) {
-	data = new double[size];
+Vector::Vector(int length, int subS): size(length), subSize(subS) {
+	data = new double[subSize];
 }
 
-Vector::Vector(const double *vec, int length): size(length) {
-	data = new double[size];
-	for(int index = 0; index < size; index++)
+Vector::Vector(const double *vec, int length, int subS): size(length), subSize(subS) {
+	data = new double[subSize];
+	for(int index = 0; index < subSize; index++)
 		data[index] = vec[index];
 }
 
-Vector::Vector(const Vector &vector): size(vector.size) {
-    data = new double[size];
-    for(int index = 0; index < size; index++)
+Vector::Vector(const Vector &vector): size(vector.size), subSize(vector.subSize) {
+    data = new double[subSize];
+    for(int index = 0; index < subSize; index++)
 		data[index] = vector.data[index];
 }
 
-Vector::Vector(Vector &&vector) noexcept: size(vector.size) {
+Vector::Vector(Vector &&vector) noexcept: size(vector.size), subSize(vector.subSize) {
     data = vector.data;
     vector.data = nullptr;
 }
 
 Vector &Vector::operator=(const Vector &vector) {
 	if(&vector != this) {
-    	for(int index = 0; index < vector.size; index++)
+    	for(int index = 0; index < vector.subSize; index++)
 		data[index] = vector.data[index];
 	}
 	return *this;
@@ -42,6 +42,7 @@ Vector &Vector::operator=(const Vector &vector) {
 Vector &Vector::operator=(Vector &&vector) noexcept {
 	if(&vector != this) {
         size = vector.size;
+        subSize = vector.subSize;
         delete[] data;
     	data = vector.data;
         vector.data = nullptr;
@@ -54,7 +55,7 @@ void Vector::print(std::ostream &out) const {
     if(!rank)
         res = new double[size];
     
-    MPI_Gatherv(data + workZoneLeft, workZoneRight - workZoneLeft, MPI_DOUBLE, res, subSizes, offsets, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Gatherv(data, subSize, MPI_DOUBLE, res, subSizes, offsets, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if(!rank) {
         out << res[0];
         for(int index = 1; index < size; index++)
@@ -73,33 +74,37 @@ double &Vector::operator[](int index) const {
 }
 
 Vector operator+(Vector a, const Vector &b) {
-    for(int index = workZoneLeft; index < workZoneRight; index++)   
+    for(int index = 0; index < a.subSize; index++)   
         a[index] += b[index];
     return a;
 }
 
 Vector operator-(Vector a, const Vector &b) {
-    for(int index = workZoneLeft; index < workZoneRight; index++)   
+    for(int index = 0; index < a.subSize; index++)   
         a[index] -= b[index];
     return a;
 }
 
 
 Vector operator*(const Matrix &mat, Vector vec) {
-	double *res = new double[vec.size];
+	double *subRes = new double[vec.size], *res = new double[vec.size];
 	for(int row = 0; row < vec.size; row++) {
-        res[row] = 0;
-		for(int column = workZoneLeft; column < workZoneRight; column++)
-			res[row] += mat[row * vec.size + column] * vec[column];
+        subRes[row] = 0;
+		for(int column = 0; column < vec.subSize; column++)
+			subRes[row] += mat[row * vec.subSize + column] * vec[column];
 	}
-    MPI_Allreduce(res, vec.data, vec.size, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(subRes, res, vec.size, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    for(int index = 0; index < vec.subSize; index++) {
+        vec[index] = res[index + vec.size * rank / processCount];
+    }
 	delete[] res;
+    delete[] subRes;
 	return vec;
 }
 
 
 Vector operator*(double scalar, Vector vec) {
-    for(int index = workZoneLeft; index < workZoneRight; index++) {
+    for(int index = 0; index < vec.subSize; index++) {
         vec[index] *= scalar;
     }
 	return vec;
@@ -107,7 +112,7 @@ Vector operator*(double scalar, Vector vec) {
 
 double Vector::dotProduction(const Vector &a, const Vector &b) {
 	double res = 0, subRes = 0;
-	for(int index = workZoneLeft; index < workZoneRight; index++)
+	for(int index = 0; index < a.subSize; index++)
 		subRes += a[index] * b[index];
     MPI_Allreduce(&subRes, &res, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 	return res;
