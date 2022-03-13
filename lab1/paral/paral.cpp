@@ -50,10 +50,24 @@ Vector &Vector::operator=(Vector &&vector) noexcept {
 }
 
 void Vector::print(std::ostream &out) const {
-	out << data[0];
-	for(int index = 1; index < size; index++)
-		out << ' ' << data[index];
-	out << '\n';
+    int *offsets = nullptr, *subSizes = nullptr;
+    double *res = nullptr;
+    if(!rank) {
+        offsets = new int[processCount]; subSizes = new int[processCount]; res = new double[size];
+        offsets[0] = 0; subSizes[0] = size / processCount;
+        for(int index = 1; index < processCount; index++) {
+            subSizes[index] = size * (index + 1) / processCount - size * index / processCount;
+            offsets[index] = offsets[index - 1] + subSizes[index - 1];
+        }
+    }
+    MPI_Gatherv(data + workZoneLeft, workZoneRight - workZoneLeft, MPI_DOUBLE, res, subSizes, offsets, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    if(!rank) {
+        out << res[0];
+        for(int index = 1; index < size; index++)
+	        out << ' ' << res[index];
+        out << '\n';
+    }
+    delete[] offsets; delete[] subSizes; delete[] res;
 }
 
 double Vector::squareNorm() const {

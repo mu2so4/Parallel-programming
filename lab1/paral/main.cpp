@@ -78,8 +78,7 @@ int main(int argc, char** argv) {
 		rest = new_rest;
 	}
 
-	if(!rank)
-		result.print(std::cout);
+	result.print(std::cout);
 
 	MPI_Finalize();
 	return 0;
