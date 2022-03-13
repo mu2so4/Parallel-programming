@@ -9,6 +9,8 @@ extern int rank;
 extern int processCount;
 extern int workZoneLeft;
 extern int workZoneRight;
+extern int *offsets;
+extern int *subSizes;
 
 class Vector;
 

@@ -50,16 +50,10 @@ Vector &Vector::operator=(Vector &&vector) noexcept {
 }
 
 void Vector::print(std::ostream &out) const {
-    int *offsets = nullptr, *subSizes = nullptr;
     double *res = nullptr;
-    if(!rank) {
-        offsets = new int[processCount]; subSizes = new int[processCount]; res = new double[size];
-        offsets[0] = 0; subSizes[0] = size / processCount;
-        for(int index = 1; index < processCount; index++) {
-            subSizes[index] = size * (index + 1) / processCount - size * index / processCount;
-            offsets[index] = offsets[index - 1] + subSizes[index - 1];
-        }
-    }
+    if(!rank)
+        res = new double[size];
+    
     MPI_Gatherv(data + workZoneLeft, workZoneRight - workZoneLeft, MPI_DOUBLE, res, subSizes, offsets, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     if(!rank) {
         out << res[0];
@@ -67,7 +61,7 @@ void Vector::print(std::ostream &out) const {
 	        out << ' ' << res[index];
         out << '\n';
     }
-    delete[] offsets; delete[] subSizes; delete[] res;
+    delete[] res;
 }
 
 double Vector::squareNorm() const {
@@ -79,14 +73,24 @@ double &Vector::operator[](int index) const {
 }
 
 Vector operator+(Vector a, const Vector &b) {
-    for(int index = workZoneLeft; index < workZoneRight; index++)
-		a[index] += b[index];
+    //double *buf = new double[workZoneRight - workZoneLeft];
+    for(int index = workZoneLeft; index < workZoneRight; index++)   
+        a[index] += b[index];
+		//buf[index - workZoneLeft] = a[index] + b[index];
+
+    //MPI_Allgatherv(buf, workZoneRight - workZoneLeft, MPI_DOUBLE, &a[0], subSizes, offsets, MPI_DOUBLE, MPI_COMM_WORLD);
+    //delete[] buf;
     return a;
 }
 
 Vector operator-(Vector a, const Vector &b) {
-    for(int index = workZoneLeft; index < workZoneRight; index++)
-		a[index] -= b[index];
+    //double *buf = new double[workZoneRight - workZoneLeft];
+    for(int index = workZoneLeft; index < workZoneRight; index++)   
+        a[index] -= b[index];
+		//buf[index - workZoneLeft] = a[index] - b[index];
+
+    //MPI_Allgatherv(buf, workZoneRight - workZoneLeft, MPI_DOUBLE, &a[0], subSizes, offsets, MPI_DOUBLE, MPI_COMM_WORLD);
+    //delete[] buf;
     return a;
 }
 
@@ -94,18 +98,20 @@ Vector operator-(Vector a, const Vector &b) {
 Vector operator*(const Matrix &mat, Vector vec) {
 	double *res = new double[vec.size];
 	for(int row = 0; row < vec.size; row++) {
+        res[row] = 0;
 		for(int column = workZoneLeft; column < workZoneRight; column++)
 			res[row] += mat[row * vec.size + column] * vec[column];
 	}
-	delete[] vec.data;
-	vec.data = res;
+    MPI_Allreduce(res, vec.data, vec.size, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	delete[] res;
 	return vec;
 }
 
 
 Vector operator*(double scalar, Vector vec) {
-	for(int index = workZoneLeft; index < workZoneRight; index++)
-		vec[index] *= scalar;
+    for(int index = workZoneLeft; index < workZoneRight; index++) {
+        vec[index] *= scalar;
+    }
 	return vec;
 }
 

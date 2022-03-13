@@ -8,6 +8,8 @@ int rank;
 int processCount;
 int workZoneLeft;
 int workZoneRight;
+int *offsets;
+int *subSizes;
 
 int main(int argc, char** argv) {
 	if(argc != 3) {
@@ -50,7 +52,14 @@ int main(int argc, char** argv) {
 	if(rank) {
 		pre_b = new double[dim]; pre_koefs = new double[dim * dim];
 	}
-
+	else {
+        	offsets = new int[processCount]; subSizes = new int[processCount];
+	        offsets[0] = 0; subSizes[0] = dim / processCount;
+        	for(int index = 1; index < processCount; index++) {
+   	        	subSizes[index] = dim * (index + 1) / processCount - dim * index / processCount;
+        		offsets[index] = offsets[index - 1] + subSizes[index - 1];
+        	}
+	}
 	
 	MPI_Bcast(pre_b, dim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 	MPI_Bcast(pre_koefs, dim * dim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -68,7 +77,7 @@ int main(int argc, char** argv) {
 
 	double control = b.squareNorm() * epsilon * epsilon;
 
-	for(int iter = 0; iter < 10000 &&rest.squareNorm() >= control; iter++) {
+	for(int iter = 0; iter < 10000 && rest.squareNorm() >= control; iter++) {
 		Vector z_1 = koefs * z;
 		double alpha = Vector::dotProduction(rest, rest) / Vector::dotProduction(z_1, z);
 		Vector new_rest = rest - alpha * z_1;
@@ -77,8 +86,8 @@ int main(int argc, char** argv) {
 		z = new_rest + beta * z;
 		rest = new_rest;
 	}
-
 	result.print(std::cout);
+    delete[] offsets; delete[] subSizes;
 
 	MPI_Finalize();
 	return 0;
