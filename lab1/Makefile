@@ -1,28 +1,58 @@
 CC=g++
+CP=mpicxx
 CFLAGS=-O2 -c -Wall -std=c++14
 
-all: non-p sle-generator check
+SERIES_MAIN_FILE=series/main
+SERIES_IMPLEMENTATION_FILE=series/series
+SERIES_HEADER=series/linears.h
+SERIES_EXE=series/series
 
-non-p: main.o series.o
-	$(CC) main.o series.o -o non-p.exe
+PARAL_MAIN_FILE=paral/main
+PARAL_IMPLEMENTATION_FILE=paral/paral
+PARAL_HEADER=paral/linears.h
+PARAL_EXE=paral/paral
 
-main.o: main.cpp linears.h
-	$(CC) $(CFLAGS) main.cpp -o main.o
+SLE_GEN_SOURCE=gen_sle
+SLE_GEN_EXE=gen-sle
 
-series.o: series.cpp linears.h
-	$(CC) $(CFLAGS) series.cpp -o series.o
+CHECK_FILE=check
 
-sle-generator: gen_sle.o
-	$(CC) gen_sle.o -o sle-generator.exe
+all: $(SERIES_EXE) $(PARAL_EXE) $(SLE_GEN_EXE) $(CHECK_FILE)
 
-gen_sle.o: gen_sle.cpp
-	$(CC) $(CFLAGS) gen_sle.cpp -o gen_sle.o
 
-check: check.o simple.o
-	$(CC) check.o simple.o -o check.exe
+$(SERIES_EXE): $(SERIES_MAIN_FILE).o $(SERIES_IMPLEMENTATION_FILE).o
+	$(CC) $(SERIES_MAIN_FILE).o $(SERIES_IMPLEMENTATION_FILE).o -o $(SERIES_EXE)
 
-check.o: check.cpp linears.h
-	$(CC) $(CFLAGS) check.cpp -o check.o
+$(SERIES_MAIN_FILE).o: $(SERIES_MAIN_FILE).cpp $(SERIES_HEADER)
+	$(CC) $(CFLAGS) $(SERIES_MAIN_FILE).cpp -o $(SERIES_MAIN_FILE).o
+
+$(SERIES_IMPLEMENTATION_FILE).o: $(SERIES_IMPLEMENTATION_FILE).cpp $(SERIES_HEADER)
+	$(CC) $(CFLAGS) $(SERIES_IMPLEMENTATION_FILE).cpp -o $(SERIES_IMPLEMENTATION_FILE).o
+
+
+$(PARAL_EXE): $(PARAL_MAIN_FILE).o $(PARAL_IMPLEMENTATION_FILE).o
+	$(CP) $(PARAL_MAIN_FILE).o $(PARAL_IMPLEMENTATION_FILE).o -o $(PARAL_EXE)
+
+$(PARAL_MAIN_FILE).o: $(PARAL_MAIN_FILE).cpp $(PARAL_HEADER)
+	$(CP) $(CFLAGS) $(PARAL_MAIN_FILE).cpp -o $(PARAL_MAIN_FILE).o
+
+$(PARAL_IMPLEMENTATION_FILE).o: $(PARAL_IMPLEMENTATION_FILE).cpp $(PARAL_HEADER)
+	$(CP) $(CFLAGS) $(PARAL_IMPLEMENTATION_FILE).cpp -o $(PARAL_IMPLEMENTATION_FILE).o
+
+
+
+$(SLE_GEN_EXE): $(SLE_GEN_SOURCE).o
+	$(CC) $(SLE_GEN_SOURCE).o -o $(SLE_GEN_EXE)
+
+$(SLE_GEN_SOURCE).o: $(SLE_GEN_SOURCE).cpp
+	$(CC) $(CFLAGS) $(SLE_GEN_SOURCE).cpp -o $(SLE_GEN_SOURCE).o
+
+$(CHECK_FILE): $(CHECK_FILE).o $(SERIES_IMPLEMENTATION_FILE).o
+	$(CC) $(CHECK_FILE).o $(SERIES_IMPLEMENTATION_FILE).o -o $(CHECK_FILE)
+
+$(CHECK_FILE).o: $(CHECK_FILE).cpp $(SERIES_HEADER)
+	$(CC) $(CFLAGS) $(CHECK_FILE).cpp -o $(CHECK_FILE).o
 
 clean:
-	rm -rf *.o 
+	rm -rf */*.o
+	rm -rf *.o

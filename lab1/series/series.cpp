@@ -7,13 +7,11 @@ Matrix::Matrix(int size) {
 Matrix::Matrix(std::istream &in, int length): size(length) {
 	data = new double[size * size];
 	for(int index = 0; index < size * size; index++) {
-		double num;
-		in >> num;
+		in >> data[index];
 		if(in.eof()) {
 			std::cerr << "reached the end of file too early\n";
 			throw std::exception();
 		}
-		data[index] = num;
 	}
 }
 
@@ -34,13 +32,11 @@ Vector::Vector(const double *vec, int length): size(length) {
 Vector::Vector(std::istream &in, int length): size(length) {
 	data = new double[size];
 	for(int index = 0; index < size; index++) {
-		double num;
-		in >> num;
+		in >> data[index];
 		if(in.eof()) {
 			std::cerr << "reached the end of file too early\n";
 			throw std::exception();
 		}
-		data[index] = num;
 	}
 }
 
