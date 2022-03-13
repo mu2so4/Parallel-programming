@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "linears.h"
+#include "series/linears.h"
 
 int main(int argc, char **argv) {
 	if(argc != 3) {

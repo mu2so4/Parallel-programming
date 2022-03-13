@@ -1,20 +1,9 @@
 #include "linears.h"
 
-Matrix::Matrix(int size) {
-	data = new double[size * size];
-}
-
-Matrix::Matrix(std::istream &in, int length): size(length) {
-	data = new double[size * size];
-	for(int index = 0; index < size * size; index++) {
-		double num;
-		in >> num;
-		if(in.eof()) {
-			std::cerr << "reached the end of file too early\n";
-			throw std::exception();
-		}
-		data[index] = num;
-	}
+Matrix::Matrix(const double *mat, int dim): size(dim) {
+    data = new double[size * size];
+	for(int index = 0; index < size * size; index++)
+		data[index] = mat[index];
 }
 
 double &Matrix::operator[](int index) const {
@@ -29,19 +18,6 @@ Vector::Vector(const double *vec, int length): size(length) {
 	data = new double[size];
 	for(int index = 0; index < size; index++)
 		data[index] = vec[index];
-}
-
-Vector::Vector(std::istream &in, int length): size(length) {
-	data = new double[size];
-	for(int index = 0; index < size; index++) {
-		double num;
-		in >> num;
-		if(in.eof()) {
-			std::cerr << "reached the end of file too early\n";
-			throw std::exception();
-		}
-		data[index] = num;
-	}
 }
 
 Vector::Vector(const Vector &vector): size(vector.size) {
@@ -89,13 +65,13 @@ double &Vector::operator[](int index) const {
 }
 
 Vector operator+(Vector a, const Vector &b) {
-    for(int index = 0; index < a.size; index++)
+    for(int index = workZoneLeft; index < workZoneRight; index++)
 		a[index] += b[index];
     return a;
 }
 
 Vector operator-(Vector a, const Vector &b) {
-    for(int index = 0; index < a.size; index++)
+    for(int index = workZoneLeft; index < workZoneRight; index++)
 		a[index] -= b[index];
     return a;
 }
@@ -104,7 +80,7 @@ Vector operator-(Vector a, const Vector &b) {
 Vector operator*(const Matrix &mat, Vector vec) {
 	double *res = new double[vec.size];
 	for(int row = 0; row < vec.size; row++) {
-		for(int column = 0; column < vec.size; column++)
+		for(int column = workZoneLeft; column < workZoneRight; column++)
 			res[row] += mat[row * vec.size + column] * vec[column];
 	}
 	delete[] vec.data;
@@ -114,15 +90,16 @@ Vector operator*(const Matrix &mat, Vector vec) {
 
 
 Vector operator*(double scalar, Vector vec) {
-	for(int index = 0; index < vec.size; index++)
+	for(int index = workZoneLeft; index < workZoneRight; index++)
 		vec[index] *= scalar;
 	return vec;
 }
 
 double Vector::dotProduction(const Vector &a, const Vector &b) {
-	double res = 0;
-	for(int index = 0; index < a.size; index++)
-		res += a[index] * b[index];
+	double res = 0, subRes = 0;
+	for(int index = workZoneLeft; index < workZoneRight; index++)
+		subRes += a[index] * b[index];
+    MPI_Allreduce(&subRes, &res, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 	return res;
 }
 
