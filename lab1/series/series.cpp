@@ -100,6 +100,7 @@ Vector operator-(Vector a, const Vector &b) {
 Vector operator*(const Matrix &mat, Vector vec) {
 	double *res = new double[vec.size];
 	for(int row = 0; row < vec.size; row++) {
+        res[row] = 0;
 		for(int column = 0; column < vec.size; column++)
 			res[row] += mat[row * vec.size + column] * vec[column];
 	}
