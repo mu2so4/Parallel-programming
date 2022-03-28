@@ -1,25 +1,26 @@
 #ifndef LINEARS_H
 #define LINEARS_H
 
-#include <iostream>
-#include <cmath>
 #include <mpi.h>
+#include <iostream>
 
 extern int rank;
 extern int processCount;
 extern int workZoneLeft;
-extern int workZoneRight;
+extern int subSize;
 extern int *offsets;
 extern int *subSizes;
+extern double endTime;
 
 class Vector;
 
 class Matrix {
     int size;
+    int subSize;
     double *data;
 
 public:
-    Matrix(const double *mat, int size);
+    Matrix(double *mat, int rows, int columns): size(columns), subSize(rows), data(mat) {}
 
     ~Matrix() { delete[] data; }
 
@@ -31,8 +32,7 @@ class Vector {
     double *data;
 
 public:
-    explicit Vector(int size);
-    Vector(const double *vec, int length);
+    Vector(double *vec, int length): size(length), data(vec) {}
     Vector(const Vector &v);
     Vector(Vector &&v) noexcept;
 

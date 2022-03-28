@@ -1,9 +1,5 @@
 #include "linears.h"
 
-Matrix::Matrix(int size) {
-	data = new double[size * size];
-}
-
 Matrix::Matrix(std::istream &in, int length): size(length) {
 	data = new double[size * size];
 	for(int index = 0; index < size * size; index++) {
@@ -21,12 +17,6 @@ double &Matrix::operator[](int index) const {
 
 Vector::Vector(int length): size(length) {
 	data = new double[size];
-}
-
-Vector::Vector(const double *vec, int length): size(length) {
-	data = new double[size];
-	for(int index = 0; index < size; index++)
-		data[index] = vec[index];
 }
 
 Vector::Vector(std::istream &in, int length): size(length) {

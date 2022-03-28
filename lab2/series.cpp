@@ -35,3 +35,9 @@ double dot_production(const double *a, const double *b, int size) {
 	return res;
 }
 
+std::ostream &print_vector(const double *vector, std::ostream &out, int size) {
+	out << vector[0];
+	for(int index = 1; index < size; index++)
+		out << ' ' << vector[index];
+	return out;
+}

@@ -1,5 +1,4 @@
 #include <fstream>
-#include <cstdlib>
 #include <iostream>
 #include "linears.h"
 
