@@ -1,23 +1,7 @@
 #include "linears.h"
 
-Matrix::Matrix(const double *mat, int dim, int subS): size(dim), subSize(subS) {
-    data = new double[size * subSize];
-	for(int index = 0; index < size * subSize; index++)
-		data[index] = mat[index];
-}
-
 double &Matrix::operator[](int index) const {
 	return data[index];
-}
-
-Vector::Vector(int length, int subS): size(length), subSize(subS) {
-	data = new double[subSize];
-}
-
-Vector::Vector(const double *vec, int length, int subS): size(length), subSize(subS) {
-	data = new double[subSize];
-	for(int index = 0; index < subSize; index++)
-		data[index] = vec[index];
 }
 
 Vector::Vector(const Vector &vector): size(vector.size), subSize(vector.subSize) {
@@ -56,6 +40,7 @@ void Vector::print(std::ostream &out) const {
         res = new double[size];
     
     MPI_Gatherv(data, subSize, MPI_DOUBLE, res, subSizes, offsets, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    endTime = MPI_Wtime();
     if(!rank) {
         out << res[0];
         for(int index = 1; index < size; index++)

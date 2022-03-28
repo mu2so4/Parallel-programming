@@ -22,18 +22,18 @@ int main(int argc, char** argv) {
 	for(int index = 0; index < size; index++)
 		arrx0[index] = 1;
 	Vector result(arrx0, size), rest = b - koefs * result, z = rest;
-	delete[] arrx0;
+    //z.print(std::cerr);
 
-	double control = b.squareNorm() * epsilon * epsilon;
-
-	for(int iter = 0; iter < 10000 &&rest.squareNorm() >= control; iter++) {
+	double control = b.squareNorm() * epsilon * epsilon, r2 = rest.squareNorm();
+	for(int iter = 0; iter < 10000 && r2 >= control; iter++) {
 		Vector z_1 = koefs * z;
-		double alpha = Vector::dotProduction(rest, rest) / Vector::dotProduction(z_1, z);
+		double alpha = r2 / Vector::dotProduction(z_1, z);
 		Vector new_rest = rest - alpha * z_1;
-		double beta = Vector::dotProduction(new_rest, new_rest) / Vector::dotProduction(rest, rest);
+		double nr2 = new_rest.squareNorm(), beta = nr2 / r2;
 		result = result + alpha * z;
 		z = new_rest + beta * z;
 		rest = new_rest;
+        r2 = nr2;
 	}
 
 	result.print(std::cout);

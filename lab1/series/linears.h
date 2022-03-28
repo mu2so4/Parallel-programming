@@ -2,7 +2,6 @@
 #define LINEARS_H
 
 #include <iostream>
-#include <cmath>
 
 class Vector;
 
@@ -11,7 +10,6 @@ class Matrix {
     double *data;
 
 public:
-    explicit Matrix(int size);
     explicit Matrix(std::istream &in, int size);
 
     ~Matrix() { delete[] data; }
@@ -25,7 +23,7 @@ class Vector {
 
 public:
     explicit Vector(int size);
-    Vector(const double *vec, int size);
+    Vector(double *vec, int length): size(length), data(vec) {}
     Vector(std::istream &in, int size);
     Vector(const Vector &v);
     Vector(Vector &&v) noexcept;
