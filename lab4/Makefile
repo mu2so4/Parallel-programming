@@ -1,0 +1,20 @@
+CXX=icpc
+CXXP=mpiicpc
+CFLAGS=-c -std=c++14 -O3 -Wall
+
+FIELD_SOURCE=field
+LIFE_SOURCE=life
+
+all: $(LIFE_SOURCE)
+
+$(LIFE_SOURCE): $(LIFE_SOURCE).o $(FIELD_SOURCE).o
+	$(CXXP) $(LIFE_SOURCE).o $(FIELD_SOURCE).o -o $(LIFE_SOURCE)
+
+$(LIFE_SOURCE).o: $(LIFE_SOURCE).cpp $(FIELD_SOURCE).h
+	$(CXXP) $(CFLAGS) $(LIFE_SOURCE).cpp -o $(LIFE_SOURCE).o
+
+$(FIELD_SOURCE).o: $(FIELD_SOURCE).cpp $(FIELD_SOURCE).h
+	$(CXX) $(CFLAGS) $(FIELD_SOURCE).cpp -o $(FIELD_SOURCE).o
+
+clean:
+	rm -rf *.o
