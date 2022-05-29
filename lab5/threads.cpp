@@ -86,13 +86,10 @@ void *executor_thread(void *args) {
 			sub_exec_time += MPI_Wtime();
 			performed_task_count++;
 		}
-		//MPI_Request ack_request;
 		MPI_Send(NULL, 0, MPI_INT, root_rank,
 			TASK_PERFORMED_TAG, MPI_COMM_WORLD);
 		MPI_Send(NULL, 0, MPI_INT, root_rank,
 			TASK_PERFORMED_TAG, MPI_COMM_WORLD);
-		//MPI_Request_free(&ack_request);
-		//std::cerr << rank << '\n';
 		*is_filled = 0;
 		pthread_cond_signal(cond);
 		pthread_mutex_unlock(perform_mutex);
@@ -127,11 +124,9 @@ void *receiver_thread(void *args) {
 		MPI_Request list_request;
 		MPI_Irecv(list_number, 1, MPI_INT, root_rank, LIST_NUMBER_TAG,
 			MPI_COMM_WORLD, &list_request);
-		//pthread_mutex_lock(count_mutex);
 		*done_task_count = 0;
 		MPI_Recv(task_buffer, *current_task_count, MPI_INT, MPI_ANY_SOURCE,
 			ASSIGN_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		//pthread_mutex_unlock(count_mutex);
 		if(*current_task_count == 0) {
 			*list_number = 0;
 			*is_filled = 1;
