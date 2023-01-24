@@ -1,16 +1,23 @@
-# Parallel programming basics 2022
+# Основы параллельного программирования 2022
+Лабораторные работы выполнены М. А. Муратовым. Семинарист &ndash; А. Ю. Власенко.
 
-**Version 1.2**
+# Описание репозитория
+Для каждой лабораторной работы даны исходные коды программ, `Makefile`'ы для их сборки, bash-скрипты
+для запуска программ на кластере, протоколы результатов и итоговые отчёты (не без косяков).
 
-- [Main page](https://ssd.sscc.ru/ru/chair/nsu/parallel-programming)
+Убедительная просьба не катать просто так исходные коды программ, особенно тем, кто в группах Власенко (он
+может узнать мой код). А вот копирование `Makefile`'ов и bash-скриптов без изменений не воспрещается.
 
-- [Lab1](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab1_2020.pdf): iterative methods for solving linear systems of equations
+## Ссылки на лабораторные работы
 
-- [Lab2](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab2_2020.pdf): parallel implementation
-for solving linear systems of equations
+- [Основная страница](https://ssd.sscc.ru/ru/chair/nsu/parallel-programming)
 
-- [Lab3](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab3_2020.pdf): matrix mutltiplication in MPI 2D topology
+- [Lab1](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab1_2020.pdf): итерационные методы решения СЛАУ при помощи MPI
+
+- [Lab2](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab2_2020.pdf): итерационные методы решения СЛАУ при помощи OpenMP
+
+- [Lab3](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab3_2020.pdf): умножение матриц на двухмерной решётке процессов MPI
 
 - [Lab4](https://ssd.sscc.ru/sites/default/files/content/attach/343/parallel_lab4_2020.pdf): 3D Jacobi method parallel implementation
 
-- [Lab5](https://ssd.sscc.ru/ru/content/opplabs/loadbalancing): multithread app programming. POSIX threads
+- [Lab5](https://ssd.sscc.ru/ru/content/opplabs/loadbalancing): программирование многопоточного приложения. POSIX-потоки
