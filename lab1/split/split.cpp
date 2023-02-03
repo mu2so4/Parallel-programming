@@ -99,7 +99,7 @@ double Vector::dotProduction(const Vector &a, const Vector &b) {
 	double res = 0, subRes = 0;
 	for(int index = 0; index < a.subSize; index++)
 		subRes += a[index] * b[index];
-    MPI_Allreduce(&subRes, &res, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(&subRes, &res, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 	return res;
 }
 
